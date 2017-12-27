@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity
     private void initializeDisplayContent() {
         mRecyclerItems = (RecyclerView) findViewById(R.id.list_items);
         mNotesLayoutManager = new LinearLayoutManager(this);
-        mCoursesLayoutManager = new GridLayoutManager(this, 2);
+        mCoursesLayoutManager = new GridLayoutManager(this,
+                getResources().getInteger(R.integer.course_grid_span));
 
         List<NoteInfo> notes = DataManager.getInstance().getNotes();
         mNoteRecyclerAdapter = new NoteRecyclerAdapter(this, notes);
@@ -142,18 +143,19 @@ public class MainActivity extends AppCompatActivity
             // handleSelection("Courses");
             displayCourses();
         } else if (id == R.id.nav_share) {
-            handleSelection("Don't you think you've shared enough");
+            handleSelection(R.string.nav_share_message);
         } else if (id == R.id.nav_send) {
-            handleSelection("Send");
+            handleSelection(R.string.nav_send_message);
         }
-
+        // getResources.getString(R.string.nav_send_message)
+        // getInteger, getColor, getString
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void handleSelection(String message) {
+    private void handleSelection(int message_id) {
         View view = findViewById(R.id.list_items);
-        Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, message_id, Snackbar.LENGTH_LONG).show();
     }
 }

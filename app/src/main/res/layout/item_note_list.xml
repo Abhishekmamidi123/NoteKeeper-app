@@ -18,16 +18,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:tint="@color/Orange"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_assignment_black_24dp"
+                tools:layout_editor_absoluteX="0dp"/>
+
             <TextView
                 android:id="@+id/text_course"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="0dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
                 android:text="TextView"
-                android:textAppearance="@android:style/TextAppearance.Material.Large"
-                app:layout_constraintLeft_toLeftOf="parent"
+                android:textAppearance="@style/CourseTitle"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintLeft_toRightOf="@+id/imageView3"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
@@ -35,15 +48,14 @@
                 android:id="@+id/text_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
                 android:text="TextView"
                 android:textAppearance="@android:style/TextAppearance.Material.Medium"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="@+id/text_course"
-                app:layout_constraintTop_toBottomOf="@+id/text_course"/>
+                app:layout_constraintTop_toBottomOf="@+id/text_course"
+                app:layout_constraintLeft_toRightOf="@+id/imageView3"
+                android:layout_marginLeft="8dp"/>
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
