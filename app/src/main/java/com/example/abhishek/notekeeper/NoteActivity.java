@@ -1,5 +1,6 @@
 package com.example.abhishek.notekeeper;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -26,6 +27,7 @@ import android.widget.Spinner;
 import com.example.abhishek.notekeeper.NoteKeeperDatabaseContract.CourseInfoEntry;
 import com.example.abhishek.notekeeper.NoteKeeperDatabaseContract.NoteInfoEntry;
 import com.example.abhishek.notekeeper.NoteKeeperProviderContract.Courses;
+import com.example.abhishek.notekeeper.NoteKeeperProviderContract.Notes;
 
 import java.util.List;
 
@@ -57,6 +59,7 @@ public class NoteActivity extends AppCompatActivity
     private SimpleCursorAdapter mAdapterCourses;
     private boolean mCoursesQueryFinished;
     private boolean mNotesQueryFinished;
+    private Uri mNoteUri;
 
     @Override
     protected void onDestroy() {
@@ -285,19 +288,21 @@ public class NoteActivity extends AppCompatActivity
 
     private void createNewNote() {
         final ContentValues values = new ContentValues();
-        values.put(NoteInfoEntry.COLUMN_COURSE_ID, "");
-        values.put(NoteInfoEntry.COLUMN_NOTE_TITLE, "");
-        values.put(NoteInfoEntry.COLUMN_NOTE_TEXT, "");
+        values.put(Notes.COLUMN_COURSE_ID, "");
+        values.put(Notes.COLUMN_NOTE_TITLE, "");
+        values.put(Notes.COLUMN_NOTE_TEXT, "");
 
-        AsyncTask task = new AsyncTask() {
-            @Override
-            protected Object doInBackground(Object[] objects) {
-                SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
-                mNoteId = (int) db.insert(NoteInfoEntry.TABLE_NAME, null, values);
-                return null;
-            }
-        };
-        task.execute();
+        mNoteUri = getContentResolver().insert(Notes.CONTENT_URI, values);
+
+//        AsyncTask task = new AsyncTask() {
+//            @Override
+//            protected Object doInBackground(Object[] objects) {
+//                SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+//                mNoteId = (int) db.insert(NoteInfoEntry.TABLE_NAME, null, values);
+//                return null;
+//            }
+//        };
+//        task.execute();
 
 //        DataManager dm = DataManager.getInstance();
 //        mNoteId = dm.createNewNote();
@@ -389,24 +394,13 @@ public class NoteActivity extends AppCompatActivity
 
     private CursorLoader createLoaderNotes() {
         mNotesQueryFinished = false;
-        return new CursorLoader(this) {
-            @Override
-            public Cursor loadInBackground() {
-                SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
-
-                String selection = NoteInfoEntry._ID + " = ? ";
-                String[] selectionArgs = {Integer.toString(mNoteId)};
-
-                String[] noteColumns = {
-                        NoteInfoEntry.COLUMN_COURSE_ID,
-                        NoteInfoEntry.COLUMN_NOTE_TITLE,
-                        NoteInfoEntry.COLUMN_NOTE_TEXT
-                };
-
-                return db.query(NoteInfoEntry.TABLE_NAME, noteColumns,
-                        selection, selectionArgs, null, null, null);
-            }
+        String[] noteColumns = {
+                Notes.COLUMN_COURSE_ID,
+                Notes.COLUMN_NOTE_TITLE,
+                Notes.COLUMN_NOTE_TEXT
         };
+        mNoteUri = ContentUris.withAppendedId(Notes.CONTENT_URI, mNoteId);
+        return new CursorLoader(this, mNoteUri, noteColumns, null, null, null);
     }
 
     @Override
