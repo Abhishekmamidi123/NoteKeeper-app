@@ -25,6 +25,7 @@ import android.widget.Spinner;
 
 import com.example.abhishek.notekeeper.NoteKeeperDatabaseContract.CourseInfoEntry;
 import com.example.abhishek.notekeeper.NoteKeeperDatabaseContract.NoteInfoEntry;
+import com.example.abhishek.notekeeper.NoteKeeperProviderContract.Courses;
 
 import java.util.List;
 
@@ -377,13 +378,13 @@ public class NoteActivity extends AppCompatActivity
         // Content provider will take care of loading data in background.
         // Anonymous class
         mCoursesQueryFinished = false;
-        Uri uri = Uri.parse("content://com.example.abhishek.notekeeper.provider");
+        Uri uri = Courses.CONTENT_URI;
         String[] courseColumns = {
-                CourseInfoEntry.COLUMN_COURSE_TITLE,
-                CourseInfoEntry.COLUMN_COURSE_ID,
-                CourseInfoEntry._ID
+                Courses.COLUMN_COURSE_TITLE,
+                Courses.COLUMN_COURSE_ID,
+                Courses._ID
         };
-        return new CursorLoader(this, uri, courseColumns, null, null, CourseInfoEntry.COLUMN_COURSE_TITLE);
+        return new CursorLoader(this, uri, courseColumns, null, null, Courses.COLUMN_COURSE_TITLE);
     }
 
     private CursorLoader createLoaderNotes() {

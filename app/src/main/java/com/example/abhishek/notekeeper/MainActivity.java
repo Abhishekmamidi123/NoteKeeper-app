@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.example.abhishek.notekeeper.NoteKeeperDatabaseContract.CourseInfoEntry;
 import com.example.abhishek.notekeeper.NoteKeeperDatabaseContract.NoteInfoEntry;
+import com.example.abhishek.notekeeper.NoteKeeperProviderContract.Notes;
 
 import java.util.List;
 
@@ -234,26 +235,17 @@ public class MainActivity extends AppCompatActivity
     public Loader<Cursor> onCreateLoader(int id, Bundle bundle) {
         CursorLoader loader = null;
         if(id == LOADER_NOTES) {
-            loader = new CursorLoader(this){
-                @Override
-                public Cursor loadInBackground() {
-                    SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
-                    final String[] noteColumns = new String[]{
-                            NoteInfoEntry.getQName(NoteInfoEntry._ID),
-                            NoteInfoEntry.COLUMN_NOTE_TITLE,
-                            CourseInfoEntry.COLUMN_COURSE_TITLE
-                    };
-                    final String noteOrderBy = CourseInfoEntry.COLUMN_COURSE_TITLE + ",  " + NoteInfoEntry.COLUMN_NOTE_TITLE;
-
-                    // note_info JOIN course_info ON note_info.course_id = course_info.course_id
-                    String tablesWithjoin = NoteInfoEntry.TABLE_NAME + " JOIN " +
-                            CourseInfoEntry.TABLE_NAME + " ON " +
-                            NoteInfoEntry.getQName(NoteInfoEntry.COLUMN_COURSE_ID) + " = " +
-                            CourseInfoEntry.getQName(CourseInfoEntry.COLUMN_COURSE_ID);
-                    return db.query(tablesWithjoin, noteColumns,
-                            null, null, null, null, noteOrderBy);
-                }
+            final String[] noteColumns = new String[]{
+                    Notes._ID,
+                    Notes.COLUMN_NOTE_TITLE,
+                    Notes.COLUMN_COURSE_TITLE
             };
+            final String noteOrderBy = Notes.COLUMN_COURSE_TITLE +
+                    ",  " + Notes.COLUMN_NOTE_TITLE;
+
+            loader = new CursorLoader(this, Notes.CONTENT_EXPANDED_URI, noteColumns,
+                    null, null, noteOrderBy);
+
         }
         return loader;
     }
