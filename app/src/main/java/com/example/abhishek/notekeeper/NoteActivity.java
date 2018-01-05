@@ -14,13 +14,16 @@ import android.app.LoaderManager;
 //import android.support.v4.content.Loader;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
@@ -77,7 +80,7 @@ public class NoteActivity extends AppCompatActivity
         mDbOpenHelper = new NoteKeeperOpenHelper(this);
 
         mSpinnerCourses = (Spinner) findViewById(R.id.spinner_courses);
-
+        Log.d(TAG, "*************onCreate*************");
 //        List<CourseInfo> courses = DataManager.getInstance().getCourses();
 //        ArrayAdapter<CourseInfo> adapterCourses = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, courses);
 //        adapterCourses.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -90,7 +93,6 @@ public class NoteActivity extends AppCompatActivity
 
 //        loadCourseData();
         getLoaderManager().initLoader(LOADER_COURSES, null, this);
-
         readDisplayStateValues();
         if(savedInstanceState == null) {
             saveOriginalNoteValues();
@@ -287,13 +289,53 @@ public class NoteActivity extends AppCompatActivity
     }
 
     private void createNewNote() {
+        AsyncTask<ContentValues, Integer, Uri> task = new AsyncTask<ContentValues, Integer, Uri>() {
+            private ProgressBar mProgressBar;
+
+            @Override
+            protected void onPreExecute() {
+                mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+                mProgressBar.setVisibility(View.VISIBLE);
+                mProgressBar.setProgress(1);
+            }
+
+            @Override
+            protected Uri doInBackground(ContentValues... contentValues) {
+                Log.d(TAG, "doInBackground - thread: " + Thread.currentThread().getId());
+                ContentValues insertValues = contentValues[0];
+                Uri rowUri = getContentResolver().insert(Notes.CONTENT_URI, insertValues);
+                simulateLongRunningWork();
+                publishProgress(2);
+
+                simulateLongRunningWork();
+                publishProgress(3);
+                return rowUri;
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                int progressValue = values[0];
+                mProgressBar.setProgress(progressValue);
+            }
+
+            @Override
+            protected void onPostExecute(Uri uri) {
+                Log.d(TAG, "onPostExecute - thread: " + Thread.currentThread().getId());
+                mNoteUri = uri;
+                displaySnackbar(mNoteUri.toString());
+                mProgressBar.setVisibility(View.GONE);
+            }
+        };
+
         final ContentValues values = new ContentValues();
         values.put(Notes.COLUMN_COURSE_ID, "");
         values.put(Notes.COLUMN_NOTE_TITLE, "");
         values.put(Notes.COLUMN_NOTE_TEXT, "");
 
-        mNoteUri = getContentResolver().insert(Notes.CONTENT_URI, values);
+        Log.d(TAG, "Call to execute - thread: " + Thread.currentThread().getId());
+        task.execute(values);
 
+//        mNoteUri = getContentResolver().insert(Notes.CONTENT_URI, values);
 //        AsyncTask task = new AsyncTask() {
 //            @Override
 //            protected Object doInBackground(Object[] objects) {
@@ -307,6 +349,17 @@ public class NoteActivity extends AppCompatActivity
 //        DataManager dm = DataManager.getInstance();
 //        mNoteId = dm.createNewNote();
 //        mNote = dm.getNotes().get(mNotePosition);
+    }
+
+    private void displaySnackbar(String message) {
+        View view = findViewById(R.id.spinner_courses);
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    private void simulateLongRunningWork() {
+        try {
+            Thread.sleep(2000);
+        } catch(Exception ex) {}
     }
 
     @Override

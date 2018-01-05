@@ -34,8 +34,8 @@ public class NoteKeeperOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
              if (oldVersion < 2){
-            db.execSQL(CourseInfoEntry.SQL_CREATE_INDEX1);
-            db.execSQL(NoteInfoEntry.SQL_CREATE_INDEX1);
+                 db.execSQL(CourseInfoEntry.SQL_CREATE_INDEX1);
+                 db.execSQL(NoteInfoEntry.SQL_CREATE_INDEX1);
         }
     }
 }
