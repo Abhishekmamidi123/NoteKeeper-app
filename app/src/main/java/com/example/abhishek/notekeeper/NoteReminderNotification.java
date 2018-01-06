@@ -52,6 +52,9 @@ public class NoteReminderNotification {
         Intent noteActivityIntent = new Intent(context, NoteActivity.class);
         noteActivityIntent.putExtra(NoteActivity.NOTE_ID, noteId);
 
+        Intent backupServiceIntent = new Intent(context, NoteBackupService.class);
+        backupServiceIntent.putExtra(NoteBackupService.EXTRA_COURSE_ID, NoteBackup.ALL_COURSES);
+
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 
                 // Set appropriate defaults for the notification light, sound,
@@ -81,18 +84,7 @@ public class NoteReminderNotification {
                         .bigText(noteText)
                         .setBigContentTitle(noteTitle)
                         .setSummaryText("Review note"))
-                // Show a number. This is useful when stacking notifications of
-                // a single type.
-//                .setNumber(number)
 
-                // If this notification relates to a past or upcoming event, you
-                // should set the relevant time information using the setWhen
-                // method below. If this call is omitted, the notification's
-                // timestamp will by set to the time at which it was shown.
-                // TODO: Call setWhen if this notification relates to a past or
-                // upcoming event. The sole argument to this method should be
-                // the notification timestamp in milliseconds.
-                //.setWhen(...)
 
                 // Set the pending intent to be initiated when the user touches
                 // the notification.
@@ -110,6 +102,15 @@ public class NoteReminderNotification {
                                 context,
                                 0,
                                 new Intent(context, MainActivity.class),
+                                PendingIntent.FLAG_UPDATE_CURRENT))
+
+                .addAction(
+                        0,
+                        "Backup notes",
+                        PendingIntent.getService(
+                                context,
+                                0,
+                                backupServiceIntent,
                                 PendingIntent.FLAG_UPDATE_CURRENT))
 
                 // Automatically dismiss the notification when it is touched.
