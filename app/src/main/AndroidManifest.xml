@@ -63,6 +63,11 @@
             android:enabled="true"
             android:exported="true">
         </receiver>
+        <receiver
+            android:name=".NoteReminderReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
     </application>
 
 </manifest>
