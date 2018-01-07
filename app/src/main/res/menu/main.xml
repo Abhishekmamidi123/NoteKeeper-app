@@ -7,8 +7,12 @@
         android:title="Backup notes"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_upload_notes"
         android:orderInCategory="101"
+        android:title="Upload notes"/>
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="102"
         android:title="@string/action_settings"
         app:showAsAction="never"/>
 </menu>
